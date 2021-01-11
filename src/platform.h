@@ -7,16 +7,10 @@
 
 // devices
 
-#define devices_foreach(devices, fn)                    \
-  assert(devices.list != NULL);                         \
-  ListNode* node = devices.list->head;                  \
-  list_foreach(node) {                                  \
-    struct Device* device = (struct Device*)node->data; \
-    fn(device);                                         \
-  }
+#define devices_foreach list_foreach
 
-void get_all_devices(struct Devices*);
-void free_devices(struct Devices);
+Devices* get_all_devices();
+void free_devices(Devices*);
 
 // device
 struct Device* get_default_output_device();

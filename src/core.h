@@ -18,9 +18,20 @@ typedef struct List {
   ListNode* head;
 } List;
 
-// ========================================== helper macros
+static inline List* list_new();
+static inline ListNode* list_add(List* list, void* data);
+static inline void _list_free(List* list, int free_list);
 
-#define list_foreach(node) for (; node != NULL; node = node->next)
+// ========================================== helper macros
+#define list_nodes_foreach(node) for (; node != NULL; node = node->next)
+#define list_foreach(list, fn)   \
+  ListNode* node = (list)->head; \
+  list_nodes_foreach(node) { fn(node->data); }
+
+#define list_free(list) _list_free(list, 1)
+#define list_nodes_free(list) _list_free(list, 0)
+
+// impls
 
 static inline List* list_new() {
   List* ptr = (List*)malloc(sizeof(List));
@@ -47,13 +58,16 @@ static inline ListNode* list_add(List* list, void* data) {
   return next;
 }
 
-static inline void list_free(List* list) {
+static inline void _list_free(List* list, int free_list) {
   if (list == NULL) return;
-  ListNode* node = list->head;
-  list_foreach(node) {
-    // free(node);
+  ListNode* cur = list->head;
+  ListNode* prev = list->head;
+  while (cur != NULL) {
+    prev = cur;
+    cur = cur->next;
+    free(prev);
   }
-  free(list);
+  if (free_list) free(list);
 }
 
 // ========================================= csynth
@@ -73,15 +87,10 @@ typedef struct StreamConfigRange {
   enum SampleFormat sample_format;
 } StreamConfigRange;
 
-typedef struct StreamConfigRanges {
-  struct Device* device;
-  List* list;
-} StreamConfigRanges;
+typedef struct List StreamConfigRanges;
 
 // ========================================== platform
 struct Device;
-typedef struct Devices {
-  List* list;
-} Devices;
+typedef struct List Devices;
 
 #endif

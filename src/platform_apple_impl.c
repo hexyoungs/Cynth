@@ -43,7 +43,7 @@ typedef struct Device {
   AudioDeviceID id;
 } Device;
 
-void get_all_devices(struct Devices* devices) {
+Devices* get_all_devices() {
   AudioObjectPropertyAddress addr;
   addr.mSelector = kAudioHardwarePropertyDevices;
   addr.mScope = kAudioObjectPropertyScopeGlobal;
@@ -63,31 +63,32 @@ void get_all_devices(struct Devices* devices) {
   FailIf(status != kAudioHardwareNoError, error,
          "get_devices: get device ids failed");
 
-  List* list = list_new();
+  Devices* devices = (Devices*)malloc(sizeof(Devices));
+  devices->head = NULL;
   for (int i = 0; i < device_count; i++) {
     Device* device = (Device*)malloc(sizeof(Device));
     device->id = device_ids[i];
-    list_add(list, (void*)device);
+
+    list_add(devices, (void*)device);
   }
 
   free(device_ids);
-  devices->list = list;
-  return;
+  return devices;
 
 error:
   if (device_ids) free(device_ids);
-  return;
+  return NULL;
 }
 
-void free_devices(struct Devices devices) {
-  if (devices.list == NULL) return;
-  ListNode* node = devices.list->head;
-  list_foreach(node) {
+void free_devices(Devices* devices) {
+  ListNode* node = devices->head;
+  list_nodes_foreach(node) {
     Device* device = (Device*)node->data;
     free(device);
+    node->data = NULL;
   }
-  list_free(devices.list);
-  devices.list = NULL;
+  list_free(devices);
+  devices = NULL;
 }
 
 // device
