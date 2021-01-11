@@ -1,22 +1,35 @@
-#ifndef _CSYNTH_PLATFORM
-#define _CSYNTH_PLATFORM
+#ifndef _CSYNTH_PLATFORM_H
+#define _CSYNTH_PLATFORM_H
+
+#include "core.h"
 
 // ====================================== device
-struct Devices;
-struct Device;
-typedef void (*iter_devices_cb)(struct Device*);
 
 // devices
-struct Devices* get_all_devices();
-void free_devices(struct Devices*);
-void iter_devices(struct Devices*, iter_devices_cb);
+
+#define devices_foreach(devices, fn)                    \
+  assert(devices.list != NULL);                         \
+  ListNode* node = devices.list->head;                  \
+  list_foreach(node) {                                  \
+    struct Device* device = (struct Device*)node->data; \
+    fn(device);                                         \
+  }
+
+void get_all_devices(struct Devices*);
+void free_devices(struct Devices);
 
 // device
 struct Device* get_default_output_device();
 void free_device(struct Device*);
 const char* get_device_name(struct Device*);
 
+// ====================================== configs
+void get_supported_output_configs(struct Device*, StreamConfigRanges*);
+// default_output_config
+
 // ====================================== stream
-// TODO
+// build_output_stream
+// pause
+// play
 
 #endif
