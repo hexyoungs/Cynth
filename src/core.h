@@ -6,6 +6,11 @@
 #include <stdlib.h>
 
 #define HZ_44100 44100  // cd
+#define free_to_null(ptr) \
+  if (ptr != NULL) {      \
+    free(ptr);            \
+    ptr = NULL;           \
+  }
 
 // ========================================== utils
 
@@ -83,7 +88,8 @@ typedef struct StreamConfigRange {
   uint16_t channels;
   uint32_t min_sample_rate;
   uint32_t max_sample_rate;
-  uint32_t buffer_size;
+  uint32_t min_buffer_size;
+  uint32_t max_buffer_size;
   enum SampleFormat sample_format;
 } StreamConfigRange;
 

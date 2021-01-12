@@ -50,6 +50,6 @@ include_directories(src)
 add_executable(synth ${SOURCES})
 
 if(APPLE)
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -framework CoreAudio -framework CoreFoundation")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -framework CoreAudio -framework CoreFoundation -framework AudioUnit")
 endif()
 target_link_libraries(synth m pthread)

@@ -18,7 +18,8 @@ void free_device(struct Device*);
 const char* get_device_name(struct Device*);
 
 // ====================================== configs
-void get_supported_output_configs(struct Device*, StreamConfigRanges*);
+StreamConfigRanges* get_supported_output_configs(struct Device*);
+void free_configs(StreamConfigRanges*);
 // default_output_config
 
 // ====================================== stream
