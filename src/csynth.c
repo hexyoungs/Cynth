@@ -14,7 +14,7 @@ static void _print_device_name(struct Device* device) {
 static void print_devices() {
   Devices* devices = get_all_devices();
   printf("Detected devices: \n");
-  devices_foreach(devices, _print_device_name);
+  list_foreach(devices, _print_device_name);
   free_devices(devices);
   printf("\n");
 }
@@ -43,9 +43,15 @@ static void print_device_supported_configs(struct Device* device) {
 int main() {
   print_devices();
   struct Device* device = get_default_output_device();
-  print_device_supported_configs(device);
+  // print_device_supported_configs(device);
+  StreamConfig config = get_default_output_config(device);
+  printf("channels: %d\n", config.channels);
+  printf("sample format: %d\n", config.sample_format);
+  printf("sample rate: %d\n", config.sample_rate);
+  printf("buffer size: %d\n", config.buffer_size);
+  printf("\n");
+
   // get configs
-  // init device
   // set callbacks
   // listen keyboard events
   // device.start()

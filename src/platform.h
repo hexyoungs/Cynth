@@ -7,8 +7,6 @@
 
 // devices
 
-#define devices_foreach list_foreach
-
 Devices* get_all_devices();
 void free_devices(Devices*);
 
@@ -20,7 +18,8 @@ const char* get_device_name(struct Device*);
 // ====================================== configs
 StreamConfigRanges* get_supported_output_configs(struct Device*);
 void free_configs(StreamConfigRanges*);
-// default_output_config
+
+StreamConfig get_default_output_config(struct Device*);
 
 // ====================================== stream
 // build_output_stream

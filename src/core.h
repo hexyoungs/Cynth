@@ -75,14 +75,19 @@ static inline void _list_free(List* list, int free_list) {
   if (free_list) free(list);
 }
 
-// ========================================= csynth
+// ========================================== platform
+struct Device;
+typedef struct List Devices;
+
+// ========================================= config
+enum SampleFormat { F32 = 0, I16, U16, I32 };
+
 typedef struct StreamConfig {
   uint16_t channels;
   uint32_t sample_rate;
-  uint32_t buffer_size;
+  uint32_t buffer_size;  // 0 for default
+  enum SampleFormat sample_format;
 } StreamConfig;
-
-enum SampleFormat { F32, I16, U16 };
 
 typedef struct StreamConfigRange {
   uint16_t channels;
@@ -94,9 +99,5 @@ typedef struct StreamConfigRange {
 } StreamConfigRange;
 
 typedef struct List StreamConfigRanges;
-
-// ========================================== platform
-struct Device;
-typedef struct List Devices;
 
 #endif

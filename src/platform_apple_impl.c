@@ -246,3 +246,39 @@ void free_configs(StreamConfigRanges* configs) {
   list_free(configs);
   configs = NULL;
 }
+
+StreamConfig get_default_output_config(struct Device* device) {
+  StreamConfig config;
+  config.buffer_size = 0;
+  config.channels = 0;
+  config.sample_rate = 0;
+  config.sample_format = F32;
+
+  AudioObjectPropertyAddress addr;
+  addr.mSelector = kAudioDevicePropertyStreamFormat;
+  addr.mScope = kAudioObjectPropertyScopeOutput;
+  addr.mElement = kAudioObjectPropertyElementMaster;
+
+  AudioStreamBasicDescription asbd;
+  UInt32 asbd_size = sizeof(AudioStreamBasicDescription);
+  OSStatus status =
+      AudioObjectGetPropertyData(device->id, &addr, 0, NULL, &asbd_size, &asbd);
+  FailIf(status != 0, error, "Failed to get default config");
+  FailIf(asbd.mFormatID != kAudioFormatLinearPCM, error,
+         "Failed to get default config");
+  AudioFormatFlags flags = asbd.mFormatFlags;
+  if (flags | kAudioFormatFlagIsFloat) {
+    config.sample_format = F32;
+  } else if (flags | kAudioFormatFlagIsBigEndian) {
+    config.sample_format = I16;
+  } else if (flags | kAudioFormatFlagIsSignedInteger) {
+    config.sample_format = I32;
+  }
+  config.sample_rate = asbd.mSampleRate;
+  config.channels = asbd.mChannelsPerFrame;
+  // leave buffer_size to 0 to represent default
+
+  return config;
+error:
+  return config;
+}
